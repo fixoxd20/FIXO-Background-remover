@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Background Remover</title>
+    <!-- Use Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for the loading spinner icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* A glassmorphism inspired theme with clean, modern styles */
+        :root {
+            --background-color: #e0eafc;
+            --container-bg: rgba(255, 255, 255, 0.25);
+            --border-color: rgba(255, 255, 255, 0.4);
+            --text-color: #333;
+            --button-primary: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            --button-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            --input-bg: rgba(255, 255, 255, 0.5);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: var(--text-color);
+        }
+       .xx {
+         text-align: left;
+         color:  ;
+       }
+
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--container-bg);
+            border-radius: 25px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            transform: translateY(0);
+            transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .container.processing {
+            transform: translateY(-20px);
+        }
+
+        h1 {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #3b5998;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        p {
+            font-size: 1em;
+            text-align: center;
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        .file-upload-container {
+            width: 100%;
+            text-align: center;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: var(--button-primary);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--button-shadow);
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .image-preview-container {
+            width: 100%;
+            min-height: 250px;
+            border-radius: 15px;
+            background: var(--input-bg);
+            border: 2px dashed rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: scale(0.9);
+            animation: fadeInScaleUp 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+            animation-delay: 0.2s;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            transition: all 0.5s ease;
+            background-size: 15px 15px;
+            background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
+            background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
+        }
+
+        .image-preview-container.hidden {
+            display: none;
+        }
+
+        .loading-animation {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .loading-animation.visible {
+            opacity: 1;
+        }
+
+        .loading-spinner {
+            color: #2575fc;
+            font-size: 3em;
+            animation: spin 1.5s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .message-box {
+            background-color: rgba(255, 0, 0, 0.1);
+            color: #d63031;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .message-box.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            box-shadow: var(--button-shadow);
+        }
+
+        .btn-process {
+            background: var(--button-primary);
+            color: white;
+        }
+
+        .btn-download {
+            background-color: #f7f7f7;
+            color: #2575fc;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Keyframes for animations */
+        @keyframes fadeInScaleUp {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="app-container">
+        <h1>Image Background Remover</h1>
+        <p>Upload an image and let the magic happen!</p>
+
+        <div class="file-upload-container">
+            <input type="file" id="file-input" accept="image/*">
+            <label for="file-input" class="upload-btn">
+                <i class="fas fa-cloud-upload-alt"></i> Upload Image
+            </label>
+        </div>
+
+        <div class="image-preview-container" id="image-preview-container">
+            <!-- Placeholder content will be replaced by the image -->
+            <p>Your image will appear here</p>
+            <img id="image-preview" class="image-preview" src="" alt="Image Preview">
+            <div class="loading-animation" id="loading-animation">
+                <i class="fas fa-spinner loading-spinner"></i>
+                <span>Processing...</span>
+            </div>
+        </div>
+
+        <div class="message-box" id="message-box"></div>
+
+        <div class="action-buttons">
+            <button class="btn btn-process" id="remove-btn" disabled>Remove Background</button>
+            <button class="btn btn-download" id="download-btn" disabled>Download Image</button>
+        </div>
+
+    </div>
+  <div class="xx">
+  <h5>ᴅᴇᴠᴇʟᴏᴘᴇᴅ ʙʏ ꜰɪxᴏ xᴅ</h5>
+  </div>
+  
+    <script>
+        // Get all the necessary DOM elements
+        const fileInput = document.getElementById('file-input');
+        const uploadBtn = document.querySelector('.upload-btn');
+        const removeBtn = document.getElementById('remove-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const imagePreview = document.getElementById('image-preview');
+        const previewContainer = document.getElementById('image-preview-container');
+        const loadingAnimation = document.getElementById('loading-animation');
+        const messageBox = document.getElementById('message-box');
+        const appContainer = document.getElementById('app-container');
+
+        let uploadedFile = null;
+        let processedImageUrl = null;
+
+        /**
+         * Shows a message to the user in a styled box instead of using alert().
+         * @param {string} message - The message to display.
+         * @param {string} type - 'success' or 'error' to change the color.
+         */
+        function showMessage(message, type = 'error') {
+            messageBox.textContent = message;
+            messageBox.style.backgroundColor = type === 'error' ? 'rgba(255, 0, 0, 0.1)' : 'rgba(0, 128, 0, 0.1)';
+            messageBox.style.color = type === 'error' ? '#d63031' : '#0a520a';
+            messageBox.classList.add('visible');
+            setTimeout(() => {
+                messageBox.classList.remove('visible');
+            }, 5000);
+        }
+
+        /**
+         * Handles the file upload event.
+         */
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            // Check if the file is an image
+            if (!file.type.startsWith('image/')) {
+                showMessage('Please upload an image file.', 'error');
+                return;
+            }
+
+            uploadedFile = file;
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                // Set the preview image source to the uploaded file's data URL
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                // Hide the placeholder text
+                previewContainer.querySelector('p').style.display = 'none';
+                
+                // Show the preview container with a subtle animation
+                previewContainer.style.opacity = '1';
+                previewContainer.style.transform = 'scale(1)';
+
+                // Enable the remove background button
+                removeBtn.disabled = false;
+                downloadBtn.disabled = true;
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        /**
+         * Handles the "Remove Background" button click.
+         */
+        removeBtn.addEventListener('click', async () => {
+            if (!uploadedFile) {
+                showMessage('Please upload an image first.', 'error');
+                return;
+            }
+
+            // Disable buttons and show processing state
+            removeBtn.disabled = true;
+            downloadBtn.disabled = true;
+            appContainer.classList.add('processing');
+            previewContainer.classList.add('hidden');
+            loadingAnimation.classList.add('visible');
+            
+            // --- BACKEND PROCESSING SIMULATION ---
+            // THIS IS THE PART WHERE YOU WOULD SEND THE IMAGE TO YOUR SERVER
+            // AND RECEIVE THE PROCESSED IMAGE BACK.
+            // Example of what the code would look like:
+            
+            // const formData = new FormData();
+            // formData.append('image', uploadedFile);
+            
+            // try {
+            //     const response = await fetch('YOUR_BACKEND_API_ENDPOINT', {
+            //         method: 'POST',
+            //         body: formData
+            //     });
+            //     if (!response.ok) {
+            //         throw new Error('Image processing failed.');
+            //     }
+            //     const blob = await response.blob();
+            //     processedImageUrl = URL.createObjectURL(blob);
+            // } catch (error) {
+            //     console.error('Error:', error);
+            //     showMessage('An error occurred. Please try again.', 'error');
+            //     // Reset UI on error
+            //     loadingAnimation.classList.remove('visible');
+            //     previewContainer.classList.remove('hidden');
+            //     appContainer.classList.remove('processing');
+            //     removeBtn.disabled = false;
+            //     return;
+            // }
+
+            // For this example, we'll simulate a 3-second processing time
+            // and use a placeholder image for the result.
+            
+            // IMPORTANT: The backend would use a library like `rembg` in Python
+            // to process the image and return a new image file with a transparent background.
+
+            setTimeout(() => {
+                loadingAnimation.classList.remove('visible');
+                
+                // Set a fake processed image URL for the example
+                processedImageUrl = 'https://placehold.co/400x400/00000000/000000?text=Transparent';
+                
+                // The `rembg` library will give you a result with a transparent background.
+                // We'll use a placeholder for that effect. The image needs to be a PNG
+                // with transparency to work correctly.
+                imagePreview.src = processedImageUrl;
+
+                // Animate the result back in
+                previewContainer.classList.remove('hidden');
+                appContainer.classList.remove('processing');
+                
+                // Re-enable download button and show success message
+                downloadBtn.disabled = false;
+                showMessage('Background removed successfully!', 'success');
+            }, 3000); // Simulate network and processing time
+        });
+
+        /**
+         * Handles the "Download Image" button click.
+         */
+        downloadBtn.addEventListener('click', () => {
+            if (!processedImageUrl) {
+                showMessage('No processed image to download.', 'error');
+                return;
+            }
+
+            // Create a temporary anchor element to trigger the download
+            const a = document.createElement('a');
+            a.href = processedImageUrl;
+            a.download = 'processed-image.png'; // Give the downloaded file a name
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            showMessage('Downloading your image...', 'success');
+        });
+
+    </script>
+</body>
+</html>
