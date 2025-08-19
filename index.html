@@ -3,305 +3,418 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLP Design </title>
+    <title>Community Showcase</title>
+    <!-- Tailwind CSS CDN for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Custom styles for the app */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #aafff4; /* Light blue background */
-        }
-
-        .plp-card-image {
-            aspect-ratio: 4/3;
-            object-fit: cover;
-            border-radius: 0.75rem; /* rounded-xl */
-        }
-
-        .like-btn:hover .like-icon {
-            transform: scale(1.1);
-            transition: transform 0.2s ease-in-out;
-        }
-
-        .like-btn.liked .like-icon {
-            color: #ef4444; /* red-500 */
-            animation: like-pop 0.3s ease-in-out;
-        }
-
-        @keyframes like-pop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.3); }
-            100% { transform: scale(1); }
-        }
-
-        .modal-overlay {
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: #f3f4f6;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="antialiased">
+    <!-- Main application container -->
+    <div id="app" class="container mx-auto p-4 md:p-8">
 
-    <header class="bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg p-4 sticky top-0 z-50">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-white">FIXO<span class="text-yellow-300">PLP</span></h1>
-            <div class="flex space-x-4">
-                <button id="upload-btn" class="bg-yellow-400 hover:bg-yellow-500 text-purple-800 font-medium py-2 px-4 rounded-full transition-all duration-200 shadow-md">
-                    <i class="fas fa-upload mr-2"></i>Upload PLP
-                </button>
-                <div class="relative">
-                    <input type="text" placeholder="Search designs..." class="w-64 p-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                    <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                </div>
-            </div>
-        </div>
-    </header>
+        <!-- Header Section -->
+        <header class="text-center my-8 md:my-12 space-y-2">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight">
+                Community Showcase
+            </h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                A place for the owner to share creations with the community.
+            </p>
+            <p class="text-xs text-gray-500">
+                Your User ID: <code id="userIdDisplay" class="bg-gray-200 px-2 py-1 rounded font-mono">Loading...</code>
+            </p>
+            <p id="ownerStatus" class="text-green-600 font-semibold mt-2 hidden">
+                You are the Owner. Use the form below to add new content.
+            </p>
+        </header>
 
-    <main class="container mx-auto p-4 flex-grow">
-        <div id="designs-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            </div>
-    </main>
-
-    <div id="upload-modal" class="modal-overlay fixed inset-0 z-[100] hidden flex items-center justify-center">
-        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full transform scale-95 transition-transform duration-300">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold text-gray-800">Upload a PLP Design</h2>
-                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800">&times;</button>
-            </div>
-            <p class="text-gray-600 mb-6">Upload your .zip file and an image preview.</p>
-
-            <form id="upload-form" class="space-y-4">
+        <!-- Owner's Post Form (initially hidden) -->
+        <section id="ownerFormSection" class="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-8 hidden">
+            <h2 class="text-2xl font-bold mb-6 text-gray-900">Add New Content</h2>
+            <form id="postForm" class="space-y-4">
                 <div>
-                    <label for="plp-file" class="block text-gray-700 font-medium mb-1">PLP Zip File (.zip)</label>
-                    <input type="file" id="plp-file" accept=".zip" class="w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-purple-100 file:text-purple-700 hover:file:bg-purple-200" required>
+                    <label for="postTitle" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                    <input type="text" id="postTitle" placeholder="Enter title" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div>
-                    <label for="image-preview-file" class="block text-gray-700 font-medium mb-1">Image Preview (.png, .jpg)</label>
-                    <input type="file" id="image-preview-file" accept="image/*" class="w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-purple-100 file:text-purple-700 hover:file:bg-purple-200" required>
+                    <label for="postDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea id="postDescription" placeholder="Enter a brief description" rows="3" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
                 </div>
-
-                <div id="image-preview-container" class="mt-4 hidden border-2 border-dashed border-gray-300 rounded-xl p-4 flex items-center justify-center">
-                    <img id="image-preview" src="" alt="Image Preview" class="max-w-full max-h-64 object-contain rounded-lg">
+                <div>
+                    <label for="zipUrl" class="block text-sm font-medium text-gray-700 mb-1">Zip File URL</label>
+                    <input type="url" id="zipUrl" placeholder="e.g., https://example.com/file.zip" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
-
-                <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-full transition-all duration-200 mt-6">
-                    Submit Design
+                <div>
+                    <label for="imageUrl" class="block text-sm font-medium text-gray-700 mb-1">Preview Image URL</label>
+                    <input type="url" id="imageUrl" placeholder="e.g., https://example.com/image.jpg" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <button type="submit" class="w-full bg-green-600 text-white font-semibold py-3 rounded-xl hover:bg-green-700 transition-colors shadow-md">
+                    Publish Post
                 </button>
             </form>
+        </section>
+
+        <!-- Posts Display Section -->
+        <section id="postsContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div id="loading" class="col-span-full text-center py-20">
+                <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+                <p class="mt-4 text-lg text-gray-600">Loading posts...</p>
+            </div>
+            <div id="noPosts" class="col-span-full text-center py-20 bg-white rounded-2xl shadow-lg hidden">
+                <p class="text-gray-500 text-xl">No posts found. Add one using the form above!</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal for messages and alerts -->
+    <div id="modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-xl p-6 shadow-2xl max-w-sm w-full text-center space-y-4">
+            <h3 class="text-xl font-semibold text-gray-800">Notification</h3>
+            <p id="modalMessage" class="text-gray-600"></p>
+            <button id="modalClose" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                Close
+            </button>
         </div>
     </div>
 
-    <script>
-        // JavaScript for handling dynamic content and user interactions
-        
-        // DOM elements
-        const uploadBtn = document.getElementById('upload-btn');
-        const uploadModal = document.getElementById('upload-modal');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const uploadForm = document.getElementById('upload-form');
-        const imagePreviewFile = document.getElementById('image-preview-file');
-        const imagePreview = document.getElementById('image-preview');
-        const imagePreviewContainer = document.getElementById('image-preview-container');
-        const designsGrid = document.getElementById('designs-grid');
-
-        // Show the upload modal when the button is clicked
-        uploadBtn.addEventListener('click', () => {
-            uploadModal.classList.remove('hidden');
-            // Animate the modal pop-in
-            uploadModal.querySelector('div').classList.remove('scale-95');
-        });
-
-        // Hide the modal when the close button is clicked
-        closeModalBtn.addEventListener('click', () => {
-            uploadModal.classList.add('hidden');
-            // Reset the form and preview
-            uploadForm.reset();
-            imagePreview.src = "";
-            imagePreviewContainer.classList.add('hidden');
-            // Reset modal animation state
-            uploadModal.querySelector('div').classList.add('scale-95');
-        });
-
-        // Hide the modal when clicking outside of it
-        uploadModal.addEventListener('click', (e) => {
-            if (e.target.id === 'upload-modal') {
-                closeModalBtn.click();
-            }
-        });
-
-        // Handle image preview
-        imagePreviewFile.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    imagePreview.src = e.target.result;
-                    imagePreviewContainer.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Handle form submission
-        uploadForm.addEventListener('submit', (event) => {
-            event.preventDefault(); // Prevent default form submission
-
-            const plpFile = document.getElementById('plp-file').files[0];
-            const imageFile = imagePreviewFile.files[0];
-
-            if (plpFile && imageFile) {
-                // Simulate creating a new PLP card
-                // In a real application, you would send these files to a server
-                const newDesignCard = createDesignCard({
-                    title: `Design by User ${Math.floor(Math.random() * 100)}`,
-                    plpFileName: plpFile.name,
-                    imageURL: URL.createObjectURL(imageFile),
-                    likes: 0,
-                    comments: []
-                });
-                designsGrid.prepend(newDesignCard); // Add the new card to the top
-                closeModalBtn.click(); // Close the modal
-            } else {
-                alert('Please select both a PLP zip file and an image preview.');
-            }
-        });
-
-        /**
-         * Creates a new design card element for the grid.
-         * @param {object} designData - Object containing design details.
-         * @returns {HTMLElement} The created design card element.
-         */
-        function createDesignCard(designData) {
-            const card = document.createElement('div');
-            card.className = "bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group";
-
-            // Card content
-            card.innerHTML = `
-                <div class="relative">
-                    <img src="${designData.imageURL}" alt="Design Preview" class="plp-card-image w-full transition-transform duration-300 group-hover:scale-105">
-                    <a href="#" download="${designData.plpFileName}" class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <button class="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200">
-                            <i class="fas fa-download mr-2"></i>Download
-                        </button>
-                    </a>
+    <!-- HTML Template for a single post card -->
+    <template id="postTemplate">
+        <div class="post-card bg-white rounded-2xl shadow-xl overflow-hidden transform transition-transform duration-300 hover:scale-[1.02] border border-gray-200">
+            <div class="relative">
+                <img class="post-image w-full h-64 object-cover" src="https://placehold.co/600x400/E5E7EB/4B5563?text=No+Image" alt="Post preview">
+                <div class="post-date absolute top-4 right-4 bg-gray-900 text-white text-xs font-bold px-3 py-1 rounded-full opacity-90"></div>
+            </div>
+            <div class="p-6 space-y-4">
+                <h2 class="post-title text-2xl font-bold text-gray-900"></h2>
+                <p class="post-description text-gray-600 leading-relaxed"></p>
+                <div class="flex items-center space-x-2 text-sm text-gray-500">
+                    <span class="font-semibold">Owner ID:</span>
+                    <code class="post-ownerId bg-gray-100 p-1 rounded text-xs font-mono"></code>
                 </div>
-
-                <div class="p-4">
-                    <h3 class="font-semibold text-lg text-gray-800 truncate">${designData.title}</h3>
-                    <div class="flex justify-between items-center mt-3">
-                        <div class="flex items-center space-x-2">
-                            <button class="like-btn text-gray-400 hover:text-red-500 transition-colors duration-200 focus:outline-none">
-                                <i class="fas fa-heart like-icon"></i>
-                            </button>
-                            <span class="like-count text-gray-600 font-medium">${designData.likes}</span>
-                        </div>
-                        <button class="comment-btn text-blue-500 hover:text-blue-700 transition-colors duration-200 font-medium text-sm focus:outline-none">
-                            <i class="fas fa-comment mr-1"></i>Comments
-                        </button>
-                    </div>
-
-                    <div class="comment-section mt-4 hidden">
-                        <div class="border-t pt-4">
-                            <h4 class="font-semibold text-gray-700 mb-2">Comments</h4>
-                            <div class="comment-list space-y-2">
-                                </div>
-                            <form class="comment-form mt-4 flex">
-                                <input type="text" placeholder="Add a comment..." class="flex-grow p-2 text-sm rounded-l-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                <button type="submit" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white p-2 text-sm rounded-r-lg">Post</button>
-                            </form>
-                        </div>
-                    </div>
+                <a class="download-link w-full flex items-center justify-center bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition-colors shadow-lg" href="#" download>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 11.586V3a1 1 0 112 0v8.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Download Zip File
+                </a>
+                <div class="reaction-buttons flex items-center space-x-4 border-t border-gray-200 pt-4">
+                    <!-- Reactions will be added here by JS -->
                 </div>
-            `;
-            
-            // Add event listeners for the new card
-            const likeBtn = card.querySelector('.like-btn');
-            const likeCount = card.querySelector('.like-count');
-            const commentBtn = card.querySelector('.comment-btn');
-            const commentSection = card.querySelector('.comment-section');
-            const commentForm = card.querySelector('.comment-form');
-            const commentList = card.querySelector('.comment-list');
+            </div>
+            <div class="p-6 bg-gray-50 border-t border-gray-200 space-y-4">
+                <h3 class="text-lg font-semibold text-gray-800">Comments</h3>
+                <div class="comments-container space-y-3 max-h-48 overflow-y-auto pr-2">
+                    <!-- Comments will be added here by JS -->
+                </div>
+                <form class="comment-form mt-4 flex space-x-2">
+                    <input type="text" class="comment-input flex-grow p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Add a comment..." required>
+                    <button type="submit" class="bg-blue-600 text-white p-3 rounded-xl hover:bg-blue-700 transition-colors shadow-md">
+                        Post
+                    </button>
+                </form>
+            </div>
+        </div>
+    </template>
 
-            likeBtn.addEventListener('click', () => {
-                let count = parseInt(likeCount.textContent);
-                if (likeBtn.classList.contains('liked')) {
-                    likeBtn.classList.remove('liked');
-                    count--;
-                } else {
-                    likeBtn.classList.add('liked');
-                    count++;
-                }
-                likeCount.textContent = count;
-            });
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-            commentBtn.addEventListener('click', () => {
-                commentSection.classList.toggle('hidden');
-            });
+        // Global variables provided by the canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-            commentForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const input = e.target.querySelector('input');
-                const commentText = input.value.trim();
-                if (commentText) {
-                    const newComment = document.createElement('div');
-                    newComment.className = "text-sm text-gray-800 bg-gray-100 p-2 rounded-lg";
-                    newComment.textContent = `User: ${commentText}`;
-                    commentList.appendChild(newComment);
-                    input.value = ''; // Clear the input field
-                }
-            });
+        let db, auth, userId;
+        const ownerId = 'demo-owner-id-123'; // Hardcoded owner ID for demonstration purposes
 
-            return card;
+        const elements = {
+            app: document.getElementById('app'),
+            userIdDisplay: document.getElementById('userIdDisplay'),
+            ownerStatus: document.getElementById('ownerStatus'),
+            ownerFormSection: document.getElementById('ownerFormSection'),
+            postForm: document.getElementById('postForm'),
+            postTitle: document.getElementById('postTitle'),
+            postDescription: document.getElementById('postDescription'),
+            zipUrl: document.getElementById('zipUrl'),
+            imageUrl: document.getElementById('imageUrl'),
+            postsContainer: document.getElementById('postsContainer'),
+            loading: document.getElementById('loading'),
+            noPosts: document.getElementById('noPosts'),
+            modal: document.getElementById('modal'),
+            modalMessage: document.getElementById('modalMessage'),
+            modalClose: document.getElementById('modalClose'),
+            postTemplate: document.getElementById('postTemplate'),
+        };
+
+        // Function to show a custom modal message
+        function showModal(message) {
+            elements.modalMessage.textContent = message;
+            elements.modal.classList.remove('hidden');
         }
 
-        // Add some example cards on initial load for demonstration
-        window.onload = function() {
-            const exampleDesigns = [
-                {
-                    title: "Minimalist Poster Design",
-                    plpFileName: "minimalist_poster.zip",
-                    imageURL: "https://placehold.co/400x300/F5F5F5/333333?text=Design+1",
-                    likes: 12,
-                    comments: ["Nice work!", "Love the colors."]
-                },
-                {
-                    title: "Corporate Brochure Layout",
-                    plpFileName: "corporate_brochure.zip",
-                    imageURL: "https://placehold.co/400x300/F0F8FF/006400?text=Design+2",
-                    likes: 5,
-                    comments: ["Very professional.", "Great typography."]
-                },
-                {
-                    title: "Social Media Template",
-                    plpFileName: "social_media_template.zip",
-                    imageURL: "https://placehold.co/400x300/FFF8DC/A52A2A?text=Design+3",
-                    likes: 21,
-                    comments: ["Perfect for my next post!", "Can I download this?"]
-                },
-                {
-                    title: "Event Flyer Design",
-                    plpFileName: "event_flyer.zip",
-                    imageURL: "https://placehold.co/400x300/E0FFFF/800000?text=Design+4",
-                    likes: 8,
-                    comments: ["Simple and effective.", "Good use of space."]
-                },
-                {
-                    title: "Modern Logo Mockup",
-                    plpFileName: "modern_logo.zip",
-                    imageURL: "https://placehold.co/400x300/F5FFFA/483D8B?text=Design+5",
-                    likes: 34,
-                    comments: ["Clean and sharp.", "What font did you use?"]
-                }
-            ];
+        // Initialize Firebase services
+        function initializeFirebase() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+                showModal("Failed to initialize the app. Please check the console for details.");
+            }
+        }
 
-            exampleDesigns.forEach(design => {
-                const card = createDesignCard(design);
-                designsGrid.appendChild(card);
+        // Set up authentication and UI based on user state
+        function setupAuth() {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    elements.userIdDisplay.textContent = userId;
+                    if (userId === ownerId) {
+                        elements.ownerFormSection.classList.remove('hidden');
+                        elements.ownerStatus.classList.remove('hidden');
+                    }
+                } else {
+                    try {
+                        await signInAnonymously(auth);
+                    } catch (e) {
+                        console.error("Error signing in anonymously:", e);
+                    }
+                }
             });
-        };
+        }
+
+        // Listen for real-time post updates
+        function listenForPosts() {
+            if (!db) return;
+
+            const postsCollectionPath = `artifacts/${appId}/public/data/posts`;
+            const q = collection(db, postsCollectionPath);
+
+            onSnapshot(q, async (querySnapshot) => {
+                const posts = [];
+                for (const docSnapshot of querySnapshot.docs) {
+                    const postData = docSnapshot.data();
+                    const post = { id: docSnapshot.id, ...postData };
+                    posts.push(post);
+                }
+                posts.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+                renderPosts(posts);
+            }, (error) => {
+                console.error("Error fetching posts:", error);
+                showModal("Error fetching posts. Please try again.");
+            });
+        }
+
+        // Render posts from the fetched data
+        function renderPosts(posts) {
+            elements.postsContainer.innerHTML = '';
+            elements.loading.classList.add('hidden');
+            if (posts.length === 0) {
+                elements.noPosts.classList.remove('hidden');
+            } else {
+                elements.noPosts.classList.add('hidden');
+            }
+
+            posts.forEach(post => {
+                const postCard = elements.postTemplate.content.cloneNode(true).firstElementChild;
+                postCard.setAttribute('data-id', post.id);
+
+                // Set post details
+                postCard.querySelector('.post-title').textContent = post.title;
+                postCard.querySelector('.post-description').textContent = post.description;
+                postCard.querySelector('.download-link').href = post.zipUrl;
+                postCard.querySelector('.post-image').src = post.imageUrl;
+                postCard.querySelector('.post-ownerId').textContent = post.ownerId;
+                if (post.createdAt) {
+                    postCard.querySelector('.post-date').textContent = new Date(post.createdAt.toMillis()).toLocaleDateString();
+                }
+
+                const reactionsContainer = postCard.querySelector('.reaction-buttons');
+                const reactionIcons = { '👍': '👍', '❤️': '❤️', '😂': '😂' };
+                Object.entries(reactionIcons).forEach(([reaction, icon]) => {
+                    const count = post.reactions?.[reaction]?.length || 0;
+                    const userHasReacted = post.reactions?.[reaction]?.includes(userId) ?? false;
+                    const button = document.createElement('button');
+                    button.innerHTML = `<span class="text-xl">${icon}</span> <span class="font-semibold">${count}</span>`;
+                    button.className = `flex items-center space-x-1 p-2 rounded-full transition-colors ${userHasReacted ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`;
+                    button.onclick = () => handleReaction(post.id, reaction);
+                    reactionsContainer.appendChild(button);
+                });
+
+                // Listen for comments for this post
+                const commentsContainer = postCard.querySelector('.comments-container');
+                const commentsCollectionPath = `artifacts/${appId}/public/data/posts/${post.id}/comments`;
+                const commentsQuery = query(collection(db, commentsCollectionPath), orderBy('createdAt', 'desc'), limit(50));
+                onSnapshot(commentsQuery, (commentsSnapshot) => {
+                    commentsContainer.innerHTML = '';
+                    if (commentsSnapshot.empty) {
+                        commentsContainer.innerHTML = '<p class="text-sm text-gray-500 italic">No comments yet. Be the first to add one!</p>';
+                    } else {
+                        commentsSnapshot.forEach(commentDoc => {
+                            const comment = commentDoc.data();
+                            const commentDiv = document.createElement('div');
+                            commentDiv.className = 'bg-gray-100 p-3 rounded-lg';
+                            commentDiv.innerHTML = `<p class="text-sm text-gray-700 leading-snug">${comment.text}</p><p class="text-xs text-gray-500 mt-1">User: <code class="font-mono">${comment.userId}</code></p>`;
+                            commentsContainer.appendChild(commentDiv);
+                        });
+                    }
+                }, (error) => {
+                    console.error("Error fetching comments for post:", post.id, error);
+                });
+
+                // Add event listener for comment form
+                const commentForm = postCard.querySelector('.comment-form');
+                commentForm.onsubmit = (e) => {
+                    e.preventDefault();
+                    const input = e.target.querySelector('.comment-input');
+                    if (input.value.trim()) {
+                        handleAddComment(post.id, input.value);
+                        input.value = '';
+                    }
+                };
+                
+                elements.postsContainer.appendChild(postCard);
+            });
+        }
+
+        // Handle the owner's post submission
+        async function handleAddPost(e) {
+            e.preventDefault();
+            if (!db || userId !== ownerId) {
+                showModal("You must be the owner to add a post.");
+                return;
+            }
+
+            const newPost = {
+                title: elements.postTitle.value,
+                description: elements.postDescription.value,
+                zipUrl: elements.zipUrl.value,
+                imageUrl: elements.imageUrl.value,
+                reactions: {},
+                createdAt: serverTimestamp(),
+                ownerId: userId
+            };
+
+            const postsCollectionPath = `artifacts/${appId}/public/data/posts`;
+            try {
+                await addDoc(collection(db, postsCollectionPath), newPost);
+                elements.postForm.reset();
+                showModal("Post added successfully!");
+            } catch (e) {
+                console.error("Error adding document:", e);
+                showModal("Failed to add post. Please try again.");
+            }
+        }
+
+        // Handle a user reaction
+        async function handleReaction(postId, reactionType) {
+            if (!db || !userId) return;
+
+            const postDocRef = doc(db, `artifacts/${appId}/public/data/posts/${postId}`);
+            const post = document.querySelector(`.post-card[data-id="${postId}"]`);
+            if (!post) return;
+
+            // Optimistic UI update
+            const reactionButton = post.querySelector(`.reaction-buttons button:nth-of-type(${Object.keys({'👍': 1, '❤️': 2, '😂': 3}).indexOf(reactionType) + 1})`);
+            const countSpan = reactionButton.querySelector('span:last-of-type');
+            
+            // Get current state from the DOM to avoid race conditions
+            let currentCount = parseInt(countSpan.textContent);
+            let isCurrentlyReacted = reactionButton.classList.contains('bg-blue-100');
+            
+            if (isCurrentlyReacted) {
+                reactionButton.classList.remove('bg-blue-100', 'text-blue-600');
+                reactionButton.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                countSpan.textContent = currentCount > 0 ? currentCount - 1 : 0;
+            } else {
+                // Before reacting, un-react from other reactions on this post
+                post.querySelectorAll('.reaction-buttons button').forEach(button => {
+                    if (button.classList.contains('bg-blue-100')) {
+                        const otherCountSpan = button.querySelector('span:last-of-type');
+                        const otherCount = parseInt(otherCountSpan.textContent);
+                        button.classList.remove('bg-blue-100', 'text-blue-600');
+                        button.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                        otherCountSpan.textContent = otherCount > 0 ? otherCount - 1 : 0;
+                    }
+                });
+                
+                reactionButton.classList.add('bg-blue-100', 'text-blue-600');
+                reactionButton.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                countSpan.textContent = currentCount + 1;
+            }
+
+            // Update Firestore with the new reaction
+            try {
+                const docSnap = await getDoc(postDocRef);
+                if (docSnap.exists()) {
+                    const postData = docSnap.data();
+                    const newReactions = { ...postData.reactions };
+                    if (!newReactions[reactionType]) {
+                        newReactions[reactionType] = [];
+                    }
+
+                    const hasReacted = newReactions[reactionType].includes(userId);
+                    if (hasReacted) {
+                        newReactions[reactionType] = newReactions[reactionType].filter(uid => uid !== userId);
+                    } else {
+                        // Remove user's ID from all other reaction lists
+                        Object.keys(newReactions).forEach(key => {
+                            newReactions[key] = newReactions[key].filter(uid => uid !== userId);
+                        });
+                        newReactions[reactionType].push(userId);
+                    }
+                    await updateDoc(postDocRef, { reactions: newReactions });
+                }
+            } catch (e) {
+                console.error("Error updating reaction:", e);
+                showModal("Failed to update reaction. Please try again.");
+            }
+        }
+
+        // Handle adding a comment
+        async function handleAddComment(postId, commentText) {
+            if (!db || !userId) {
+                showModal("You must be logged in to comment.");
+                return;
+            }
+
+            const commentsCollectionPath = `artifacts/${appId}/public/data/posts/${postId}/comments`;
+            const newComment = {
+                text: commentText,
+                userId: userId,
+                createdAt: serverTimestamp(),
+            };
+
+            try {
+                await addDoc(collection(db, commentsCollectionPath), newComment);
+            } catch (e) {
+                console.error("Error adding comment:", e);
+                showModal("Failed to add comment. Please try again.");
+            }
+        }
+
+        // Event listener for modal close button
+        elements.modalClose.addEventListener('click', () => {
+            elements.modal.classList.add('hidden');
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFirebase();
+            setupAuth();
+            listenForPosts();
+            elements.postForm.addEventListener('submit', handleAddPost);
+        });
     </script>
 </body>
-                      </html>
+</html>
