@@ -83,8 +83,7 @@
         </header>
 
         <div class="bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 space-y-8">
-
-            <div class="relative group overflow-hidden rounded-xl shadow-lg">
+       <div class="relative group overflow-hidden rounded-xl shadow-lg">
                 <img src="https://files.catbox.moe/fwszs7.png"
                      alt="A placeholder image of a city at night"
                      class="w-full h-auto object-cover transform transition-all duration-500 ease-in-out group-hover:scale-105 group-hover:grayscale-0 grayscale">
@@ -128,8 +127,7 @@
         </a>
     </div>
     
-                   <!-- post 2 -->
-        <div class="bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 space-y-8 mt-8">
+                   <div class="bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 space-y-8 mt-8">
             <div class="relative group overflow-hidden rounded-xl shadow-lg">
                 <img src="https://files.catbox.moe/6nqej1.png"
                      alt="A placeholder image of a cosmic scene"
@@ -186,8 +184,7 @@
         </a>
     </div>
 <br>
-                 <!--  post 3-->
-        <div class="bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 space-y-8">
+                 <div class="bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 space-y-8">
 
             <div class="relative group overflow-hidden rounded-xl shadow-lg">
                 <img src="https://files.catbox.moe/iq6laj.png"
@@ -232,6 +229,53 @@
             Download Now
         </a>
     </div>
+    <br>
+          <div class="bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 space-y-8">
+    <div class="relative group overflow-hidden rounded-xl shadow-lg">
+                <img src="https://files.catbox.moe/9ax48i.png"
+                     alt="A placeholder image of a city at night"
+                     class="w-full h-auto object-cover transform transition-all duration-500 ease-in-out group-hover:scale-105 group-hover:grayscale-0 grayscale">
+                <div class="absolute inset-0 bg-black bg-opacity-40 flex items-end p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                    <p class="text-lg font-semibold text-white tracking-wide drop-shadow-lg">
+                        The Anime Logo Design PLP File 02.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between mt-4">
+                <div class="flex items-center space-x-4">
+                    <button class="like-button flex items-center p-2 rounded-full transition-all duration-300 transform hover:scale-110 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span id="like-count-4" class="ml-2 text-sm font-medium">0</span>
+                    </button>
+
+                    <button class="comment-button flex items-center p-2 rounded-full transition-all duration-300 transform hover:scale-110 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2h-2.586l-3.212 3.212a1 1 0 01-1.414 0L6.586 15H4a2 2 0 01-2-2V5z"></path>
+                        </svg>
+                        <span class="ml-2 text-sm font-medium">Comment</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="p-8">
+        <a href="https://mobidrive.com/sharelink/z/6ehqw5esdcEBFEmLMOvnn23t2k3f62lvzXAnJ011eu6Z" download class="animated-button
+            inline-block
+            bg-gradient-to-r from-[#FF00EA] to-[#FF0042] 
+            text-white font-bold
+            py-4 px-10
+            rounded-full
+            shadow-xl
+            transition-transform transform 
+            hover:scale-105 hover:shadow-2xl 
+            focus:outline-none focus:ring-4 focus:ring-[#FF00EA] focus:ring-opacity-50">
+            Download Now
+        </a>
+    </div>
+ 
 
 <h5 class="xx">©ʙʏ ꜰɪxᴏ xᴅ | 2025</h5>
     <script>
@@ -244,32 +288,53 @@
         const closeModalButton = document.getElementById('closeModal');
         const submitCommentButton = document.getElementById('submitComment');
 
-        // Initial fake like count for each post
+        // Function to create a daily changing seed for randomness
+        function getDailySeed() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const day = now.getDate();
+            // This ensures the seed is the same for the entire day
+            return year * 10000 + month * 100 + day;
+        }
+
+        // A simple seeded pseudo-random number generator (PRNG)
+        // Source: https://stackoverflow.com/a/19303725
+        function seededRandom(seed) {
+            let x = Math.sin(seed) * 10000;
+            return x - Math.floor(x);
+        }
+
+        // Generate base fake likes for each post, changing daily
+        const baseLikes = {
+            'like-count-1': Math.floor(seededRandom(getDailySeed() + 1) * 300) + 100, // Range 100-399
+            'like-count-2': Math.floor(seededRandom(getDailySeed() + 2) * 400) + 200, // Range 200-599
+            'like-count-3': Math.floor(seededRandom(getDailySeed() + 3) * 500) + 300, // Range 300-799
+            'like-count-4': Math.floor(seededRandom(getDailySeed() + 4) * 300) + 100  // Range 100-399
+        };
+
+        // Initialize the like counts with the base likes
         let likeCounts = {
-            'like-count-1': 123,
-            'like-count-2': 456,
-            'like-count-3': 789
+            ...baseLikes
         };
 
         // Initialize the displayed like counts on page load
-        document.getElementById('like-count-1').textContent = likeCounts['like-count-1'];
-        document.getElementById('like-count-2').textContent = likeCounts['like-count-2'];
-        document.getElementById('like-count-3').textContent = likeCounts['like-count-3'];
-
+        for (const id in likeCounts) {
+            const likeCountSpan = document.getElementById(id);
+            if (likeCountSpan) {
+                likeCountSpan.textContent = likeCounts[id];
+            }
+        }
 
         // Loop through each like button and add a click event listener
         likeButtons.forEach(button => {
-            // Find the span for the like count within the same button container
             const likeCountSpan = button.querySelector('span');
             
             button.addEventListener('click', () => {
-                // Check if the button has already been liked
                 if (button.classList.contains('liked')) {
-                    // It has been liked, so remove the 'liked' class and decrement the count
                     button.classList.remove('liked');
                     likeCounts[likeCountSpan.id]--;
                 } else {
-                    // It has not been liked, so add the 'liked' class and increment the count
                     button.classList.add('liked');
                     likeCounts[likeCountSpan.id]++;
                 }
@@ -280,7 +345,6 @@
         // Loop through each comment button to show the modal
         commentButtons.forEach(button => {
             button.addEventListener('click', () => {
-                // Display the comment modal
                 commentModal.style.display = 'flex';
             });
         });
@@ -294,12 +358,8 @@
         submitCommentButton.addEventListener('click', () => {
             const commentInput = document.getElementById('commentInput');
             const commentText = commentInput.value;
-            // For now, we'll just log the comment to the console
             console.log('User submitted comment:', commentText);
             
-            // You could add logic here to display the comment on the page
-            
-            // Clear the input and hide the modal
             commentInput.value = '';
             commentModal.style.display = 'none';
         });
