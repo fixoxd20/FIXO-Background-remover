@@ -1,296 +1,314 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dark Creations</title>
+    <title>Fixo PLP File</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Custom CSS to ensure the font is applied */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #1a1a2e; /* Deep purple/blue background */
-            color: #e0e0e0; /* Light gray text */
         }
-        .container {
-            max-width: 1024px;
-            margin: auto;
+
+        /*
+            A more robust way to handle 'like' button active state visually
+            while still using Tailwind for base styles.
+        */
+        .like-button.liked {
+            color: #ef4444; /* Tailwind's red-500 */
+        }
+
+        /* Basic modal styling for the comment section */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #1f2937; /* Tailwind's gray-800 */
+            border-radius: 1rem;
             padding: 2rem;
+            max-width: 90%;
+            width: 500px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
-        .card-effect {
-            background: #232946;
-            transition: all 0.3s ease-in-out;
+        
+             /* Define the keyframes for the pulse animation */
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
         }
-        .card-effect:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+
+        /* Apply a subtle pulse animation on the button */
+        .animated-button {
+            animation: pulse 2s infinite ease-in-out;
         }
-        .download-button {
-            transition: transform 0.2s ease-in-out;
+        .p-8 {
+            text-align: center;
         }
-        .download-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        }
-        .reaction-button {
-            transition: transform 0.1s ease-in-out, background-color 0.2s;
-        }
-        .reaction-button:hover {
-            transform: scale(1.1);
-        }
-        .reaction-button.active {
-            color: #ef4444; /* Red for active like button */
+        .xx {
+            color: #b3b3b3;
+            text-align: center;
         }
     </style>
 </head>
-<body class="bg-[#1a1a2e] text-[#e0e0e0] antialiased">
+<body class="bg-slate-900 text-gray-100 min-h-screen p-4 flex flex-col items-center">
 
-    <!-- Main Container -->
-    <div class="container min-h-screen">
-        <!-- Header -->
-        <header class="py-12 text-center">
-            <h1 class="text-4xl sm:text-5xl font-extrabold text-[#e0e0e0] leading-tight tracking-tight">FIXO PLP DOWNLOADER</h1>
-            <p class="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">I AM LEGENDARY GRAPHIC DESIGNER.</p>
+    <div class="max-w-4xl mx-auto w-full">
+        <header class="text-center my-8">
+            <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 drop-shadow-md">FIXO PLP DOWNLOAD</h1>
+            <p class="mt-2 text-lg text-gray-400">I AM LEGENDARY GRAPHIC DESIGNER.</p>
         </header>
 
-        <!-- Upload Section -->
-        <section class="card-effect p-6 md:p-8 rounded-2xl shadow-xl border border-gray-700 mb-12 transform">
-            <h2 class="text-2xl font-bold text-[#e0e0e0] mb-4">Upload Fixo Project</h2>
-            <form id="upload-form" class="space-y-6">
-                <!-- Project Title -->
-                <div>
-                    <label for="project-title" class="block text-sm font-medium text-gray-400">Project Title</label>
-                    <input type="text" id="project-title" name="project-title" required class="mt-1 block w-full px-4 py-2 bg-[#232946] border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-[#8186D5] focus:border-[#8186D5] text-[#e0e0e0]">
-                </div>
+        <div class="bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 space-y-8">
 
-                <!-- Preview Image Input -->
-                <div>
-                    <label for="preview-image" class="block text-sm font-medium text-gray-400">Preview Image</label>
-                    <input type="file" id="preview-image" name="preview-image" accept="image/*" required class="mt-1 block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#34406D] file:text-[#A78BFA] hover:file:bg-[#404c7c]">
-                    <div id="image-preview" class="mt-4 hidden w-full h-48 border-2 border-dashed border-gray-600 rounded-lg overflow-hidden relative">
-                        <img src="" alt="Image Preview" class="w-full h-full object-cover">
-                        <span class="absolute inset-0 flex items-center justify-center text-gray-600 text-sm">Image Preview</span>
-                    </div>
-                </div>
-
-                <!-- Zip File Input -->
-                <div>
-                    <label for="zip-file" class="block text-sm font-medium text-gray-400">Zip File</label>
-                    <input type="file" id="zip-file" name="zip-file" accept=".zip" required class="mt-1 block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#34406D] file:text-[#A78BFA] hover:file:bg-[#404c7c]">
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="w-full bg-[#8186D5] text-[#1a1a2e] font-semibold py-3 px-4 rounded-full shadow-lg hover:bg-[#A78BFA] focus:outline-none focus:ring-2 focus:ring-[#8186D5] focus:ring-offset-2 transition-transform duration-200 hover:scale-105">
-                    Upload Project
-                </button>
-            </form>
-        </section>
-
-        <!-- Gallery of Projects -->
-        <section class="mt-12">
-            <h2 class="text-2xl font-bold text-[#e0e0e0] mb-6">Recent Projects</h2>
-            <div id="project-gallery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Example Project Card -->
-                <div class="project-card card-effect rounded-2xl shadow-xl overflow-hidden transform">
-                    <img src="https://placehold.co/600x400/232946/e0e0e0?text=Example+Project" alt="Example Project" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-[#e0e0e0] mb-2">Example Project A</h3>
-                        <div class="flex items-center justify-between mb-4">
-                            <a href="#" class="download-button bg-gray-700 text-gray-300 px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-600 flex items-center">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                Download
-                            </a>
-                            <div class="flex space-x-2">
-                                <button class="reaction-button bg-gray-700 text-gray-300 text-sm px-3 py-1 rounded-full flex items-center">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
-                                    <span class="reaction-count">12</span>
-                                </button>
-                                <button class="reaction-button bg-gray-700 text-gray-300 text-sm px-3 py-1 rounded-full flex items-center">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path></svg>
-                                    <span class="reaction-count">8</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="comments-section mt-4">
-                            <div class="text-sm font-semibold text-gray-400 mb-2">Comments</div>
-                            <ul class="comments-list text-sm text-gray-500 space-y-2">
-                                <li><span class="font-bold text-[#e0e0e0]">User A:</span> Great design!</li>
-                                <li><span class="font-bold text-[#e0e0e0]">User B:</span> best plp file.</li>
-                            </ul>
-                            <div class="mt-4 flex">
-                                <input type="text" placeholder="Add a comment..." class="comment-input flex-1 px-3 py-2 text-sm rounded-l-full border border-gray-600 bg-[#232946] text-[#e0e0e0] focus:outline-none focus:ring-[#8186D5] focus:border-[#8186D5]">
-                                <button class="post-comment-btn bg-[#8186D5] text-[#1a1a2e] text-sm px-4 py-2 rounded-r-full font-semibold hover:bg-[#A78BFA]">Post</button>
-                            </div>
-                        </div>
-                    </div>
+            <div class="relative group overflow-hidden rounded-xl shadow-lg">
+                <img src="https://files.catbox.moe/fwszs7.png"
+                     alt="A placeholder image of a city at night"
+                     class="w-full h-auto object-cover transform transition-all duration-500 ease-in-out group-hover:scale-105 group-hover:grayscale-0 grayscale">
+                <div class="absolute inset-0 bg-black bg-opacity-40 flex items-end p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                    <p class="text-lg font-semibold text-white tracking-wide drop-shadow-lg">
+                        The Anime Logo Design PLP File.
+                    </p>
                 </div>
             </div>
-        </section>
 
-        <!-- Message Box for Alerts -->
-        <div id="message-box" class="fixed inset-x-0 bottom-4 flex justify-center z-50">
-            <div id="message-content" class="hidden bg-[#A78BFA] text-[#1a1a2e] px-6 py-3 rounded-full shadow-lg transition-opacity duration-300 opacity-0 transform -translate-y-full">
-                <!-- Message content here -->
+            <div class="flex items-center justify-between mt-4">
+                <div class="flex items-center space-x-4">
+                    <button class="like-button flex items-center p-2 rounded-full transition-all duration-300 transform hover:scale-110 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span id="like-count-1" class="ml-2 text-sm font-medium">0</span>
+                    </button>
+
+                    <button class="comment-button flex items-center p-2 rounded-full transition-all duration-300 transform hover:scale-110 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2h-2.586l-3.212 3.212a1 1 0 01-1.414 0L6.586 15H4a2 2 0 01-2-2V5z"></path>
+                        </svg>
+                        <span class="ml-2 text-sm font-medium">Comment</span>
+                    </button>
+                </div>
             </div>
         </div>
+        <div class="p-8">
+        <a href="https://mobidrive.com/sharelink/z/6ehqw5esdcEBFEmLMOvnn263pNFgAZG2XWVnuen37AYa" download class="animated-button
+            inline-block
+            bg-gradient-to-r from-[#FF00EA] to-[#FF0042] 
+            text-white font-bold
+            py-4 px-10
+            rounded-full
+            shadow-xl
+            transition-transform transform 
+            hover:scale-105 hover:shadow-2xl 
+            focus:outline-none focus:ring-4 focus:ring-[#FF00EA] focus:ring-opacity-50">
+            Download Now
+        </a>
+    </div>
+    
+                   <!-- post 2 -->
+        <div class="bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 space-y-8 mt-8">
+            <div class="relative group overflow-hidden rounded-xl shadow-lg">
+                <img src="https://files.catbox.moe/6nqej1.png"
+                     alt="A placeholder image of a cosmic scene"
+                     class="w-full h-auto object-cover transform transition-all duration-500 ease-in-out group-hover:blur-none blur-sm">
+                <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                    <p class="text-xl sm:text-2xl font-bold text-white tracking-widest drop-shadow-lg">
+                        
+                    </p>
+                </div>
+            </div>
 
+            <div class="flex items-center justify-between mt-4">
+                <div class="flex items-center space-x-4">
+                    <button class="like-button flex items-center p-2 rounded-full transition-all duration-300 transform hover:scale-110 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span id="like-count-2" class="ml-2 text-sm font-medium">0</span>
+                    </button>
+
+                    <button class="comment-button flex items-center p-2 rounded-full transition-all duration-300 transform hover:scale-110 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2h-2.586l-3.212 3.212a1 1 0 01-1.414 0L6.586 15H4a2 2 0 01-2-2V5z"></path>
+                        </svg>
+                        <span class="ml-2 text-sm font-medium">Comment</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <div id="commentModal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-semibold">Leave a comment</h2>
+            <textarea id="commentInput" rows="4" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+            <div class="flex justify-end space-x-4">
+                <button id="closeModal" class="px-4 py-2 rounded-full font-medium transition-colors duration-200 hover:bg-gray-600">Cancel</button>
+                <button id="submitComment" class="px-4 py-2 rounded-full bg-blue-600 font-medium transition-colors duration-200 hover:bg-blue-700">Submit</button>
+            </div>
+        </div>
+    </div>
+           <div class="p-8">
+        <a href="https://mobidrive.com/sharelink/z/6ehqw5esdcEBFEmLMOvnn25JnJ25i3b11W2OyECHFetd" download class="animated-button
+            inline-block
+            bg-gradient-to-r from-[#FF00EA] to-[#FF0042] 
+            text-white font-bold
+            py-4 px-10
+            rounded-full
+            shadow-xl
+            transition-transform transform 
+            hover:scale-105 hover:shadow-2xl 
+            focus:outline-none focus:ring-4 focus:ring-[#FF00EA] focus:ring-opacity-50">
+            Download Now
+        </a>
+    </div>
+<br>
+                 <!--  post 3-->
+        <div class="bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 space-y-8">
+
+            <div class="relative group overflow-hidden rounded-xl shadow-lg">
+                <img src="https://files.catbox.moe/iq6laj.png"
+                     alt="A placeholder image of a city at night"
+                     class="w-full h-auto object-cover transform transition-all duration-500 ease-in-out group-hover:scale-105 group-hover:grayscale-0 grayscale">
+                <div class="absolute inset-0 bg-black bg-opacity-40 flex items-end p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                    <p class="text-lg font-semibold text-white tracking-wide drop-shadow-lg">
+                        Bot Banner PLP FILE 01.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between mt-4">
+                <div class="flex items-center space-x-4">
+                    <button class="like-button flex items-center p-2 rounded-full transition-all duration-300 transform hover:scale-110 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span id="like-count-3" class="ml-2 text-sm font-medium">0</span>
+                    </button>
+
+                    <button class="comment-button flex items-center p-2 rounded-full transition-all duration-300 transform hover:scale-110 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2h-2.586l-3.212 3.212a1 1 0 01-1.414 0L6.586 15H4a2 2 0 01-2-2V5z"></path>
+                        </svg>
+                        <span class="ml-2 text-sm font-medium">Comment</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="p-8">
+        <a href="https://mobidrive.com/sharelink/z/6ehqw5esdcEBFEmLMOvnn25JnJ25i3b11W2OyECHFetd" download class="animated-button
+            inline-block
+            bg-gradient-to-r from-[#FF00EA] to-[#FF0042] 
+            text-white font-bold
+            py-4 px-10
+            rounded-full
+            shadow-xl
+            transition-transform transform 
+            hover:scale-105 hover:shadow-2xl 
+            focus:outline-none focus:ring-4 focus:ring-[#FF00EA] focus:ring-opacity-50">
+            Download Now
+        </a>
+    </div>
+
+<h5 class="xx">©ʙʏ ꜰɪxᴏ xᴅ | 2025</h5>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const uploadForm = document.getElementById('upload-form');
-            const previewImageInput = document.getElementById('preview-image');
-            const imagePreview = document.getElementById('image-preview');
-            const imagePreviewImg = imagePreview.querySelector('img');
-            const projectGallery = document.getElementById('project-gallery');
-            const messageBox = document.getElementById('message-box');
-            const messageContent = document.getElementById('message-content');
+        // Get all elements with the class 'like-button'
+        const likeButtons = document.querySelectorAll('.like-button');
+        // Get all elements with the class 'comment-button'
+        const commentButtons = document.querySelectorAll('.comment-button');
+        // Get the modal and its buttons
+        const commentModal = document.getElementById('commentModal');
+        const closeModalButton = document.getElementById('closeModal');
+        const submitCommentButton = document.getElementById('submitComment');
 
-            // --- Utility Functions ---
-            function showMessage(message, duration = 3000) {
-                messageContent.textContent = message;
-                messageContent.classList.remove('hidden', 'opacity-0', '-translate-y-full');
-                messageContent.classList.add('opacity-100', 'translate-y-0');
+        // Initial fake like count for each post
+        let likeCounts = {
+            'like-count-1': 123,
+            'like-count-2': 456,
+            'like-count-3': 789
+        };
 
-                setTimeout(() => {
-                    messageContent.classList.add('opacity-0', '-translate-y-full');
-                    setTimeout(() => messageContent.classList.add('hidden'), 500); // Hide after transition
-                }, duration);
-            }
+        // Initialize the displayed like counts on page load
+        document.getElementById('like-count-1').textContent = likeCounts['like-count-1'];
+        document.getElementById('like-count-2').textContent = likeCounts['like-count-2'];
+        document.getElementById('like-count-3').textContent = likeCounts['like-count-3'];
 
-            // --- Image Preview Logic ---
-            previewImageInput.addEventListener('change', (event) => {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        imagePreviewImg.src = e.target.result;
-                        imagePreview.classList.remove('hidden');
-                        imagePreview.querySelector('span').style.display = 'none';
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    imagePreview.classList.add('hidden');
-                    imagePreview.querySelector('span').style.display = 'flex';
-                    imagePreviewImg.src = '';
-                }
-            });
 
-            // --- Event Listeners for Dynamic Content ---
-            function addDynamicListeners() {
-                // Add event listeners to all new reaction buttons
-                document.querySelectorAll('.reaction-button').forEach(button => {
-                    button.removeEventListener('click', handleReaction);
-                    button.addEventListener('click', handleReaction);
-                });
-
-                // Add event listeners to all new comment post buttons
-                document.querySelectorAll('.post-comment-btn').forEach(button => {
-                    button.removeEventListener('click', handlePostComment);
-                    button.addEventListener('click', handlePostComment);
-                });
-            }
-
-            // --- Handlers for User Interactions ---
-            function handleReaction(event) {
-                const button = event.currentTarget;
-                const countSpan = button.querySelector('.reaction-count');
-                let count = parseInt(countSpan.textContent, 10);
-                
-                // Toggle the 'active' class for styling
-                if (button.classList.contains('active')) {
-                    button.classList.remove('active');
-                    count--;
-                } else {
-                    button.classList.add('active');
-                    count++;
-                }
-
-                countSpan.textContent = count;
-                showMessage(`Reaction added! There are now ${count} reactions.`);
-            }
-
-            function handlePostComment(event) {
-                const button = event.currentTarget;
-                const commentSection = button.closest('.comments-section');
-                const commentInput = commentSection.querySelector('.comment-input');
-                const commentsList = commentSection.querySelector('.comments-list');
-                const commentText = commentInput.value.trim();
-
-                if (commentText) {
-                    const newComment = document.createElement('li');
-                    newComment.innerHTML = `<span class="font-bold text-[#e0e0e0]">You:</span> ${commentText}`;
-                    commentsList.prepend(newComment); // Add to the top
-                    commentInput.value = ''; // Clear input
-                    showMessage('Comment posted!');
-                }
-            }
+        // Loop through each like button and add a click event listener
+        likeButtons.forEach(button => {
+            // Find the span for the like count within the same button container
+            const likeCountSpan = button.querySelector('span');
             
-            // --- Simulate Project Upload ---
-            uploadForm.addEventListener('submit', (event) => {
-                event.preventDefault();
-
-                const title = document.getElementById('project-title').value;
-                const previewFile = document.getElementById('preview-image').files[0];
-
-                if (!title || !previewFile) {
-                    showMessage('Please fill out all fields.', 3000);
-                    return;
+            button.addEventListener('click', () => {
+                // Check if the button has already been liked
+                if (button.classList.contains('liked')) {
+                    // It has been liked, so remove the 'liked' class and decrement the count
+                    button.classList.remove('liked');
+                    likeCounts[likeCountSpan.id]--;
+                } else {
+                    // It has not been liked, so add the 'liked' class and increment the count
+                    button.classList.add('liked');
+                    likeCounts[likeCountSpan.id]++;
                 }
-
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const imageUrl = e.target.result;
-
-                    // Create a new project card element
-                    const newProjectCard = document.createElement('div');
-                    newProjectCard.className = 'project-card card-effect rounded-2xl shadow-xl overflow-hidden transform';
-                    newProjectCard.innerHTML = `
-                        <img src="${imageUrl}" alt="${title} Preview" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold text-[#e0e0e0] mb-2">${title}</h3>
-                            <div class="flex items-center justify-between mb-4">
-                                <a href="#" class="download-button bg-gray-700 text-gray-300 px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-600 flex items-center" onclick="event.preventDefault(); showMessage('Simulating file download...')">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                    Download
-                                </a>
-                                <div class="flex space-x-2">
-                                    <button class="reaction-button bg-gray-700 text-gray-300 text-sm px-3 py-1 rounded-full flex items-center">
-                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
-                                        <span class="reaction-count">0</span>
-                                    </button>
-                                    <button class="reaction-button bg-gray-700 text-gray-300 text-sm px-3 py-1 rounded-full flex items-center">
-                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path></svg>
-                                        <span class="reaction-count">0</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="comments-section mt-4">
-                                <div class="text-sm font-semibold text-gray-400 mb-2">Comments</div>
-                                <ul class="comments-list text-sm text-gray-500 space-y-2"></ul>
-                                <div class="mt-4 flex">
-                                    <input type="text" placeholder="Add a comment..." class="comment-input flex-1 px-3 py-2 text-sm rounded-l-full border border-gray-600 bg-[#232946] text-[#e0e0e0] focus:outline-none focus:ring-[#8186D5] focus:border-[#8186D5]">
-                                    <button class="post-comment-btn bg-[#8186D5] text-[#1a1a2e] text-sm px-4 py-2 rounded-r-full font-semibold hover:bg-[#A78BFA]">Post</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    projectGallery.prepend(newProjectCard);
-                    addDynamicListeners();
-                    uploadForm.reset();
-                    imagePreview.classList.add('hidden');
-                    imagePreviewImg.src = '';
-                    imagePreview.querySelector('span').style.display = 'flex';
-                    showMessage('Project uploaded successfully!');
-                };
-                reader.readAsDataURL(previewFile);
+                likeCountSpan.textContent = likeCounts[likeCountSpan.id];
             });
+        });
+
+        // Loop through each comment button to show the modal
+        commentButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Display the comment modal
+                commentModal.style.display = 'flex';
+            });
+        });
+
+        // Close the modal when the cancel button is clicked
+        closeModalButton.addEventListener('click', () => {
+            commentModal.style.display = 'none';
+        });
+
+        // Simple logic for the submit button (in a real app, you would send this to a server)
+        submitCommentButton.addEventListener('click', () => {
+            const commentInput = document.getElementById('commentInput');
+            const commentText = commentInput.value;
+            // For now, we'll just log the comment to the console
+            console.log('User submitted comment:', commentText);
             
-            // Initial listeners for the example card
-            addDynamicListeners();
+            // You could add logic here to display the comment on the page
+            
+            // Clear the input and hide the modal
+            commentInput.value = '';
+            commentModal.style.display = 'none';
+        });
+
+        // Also close the modal if the user clicks anywhere outside of the modal content
+        window.addEventListener('click', (event) => {
+            if (event.target === commentModal) {
+                commentModal.style.display = 'none';
+            }
         });
     </script>
 </body>
